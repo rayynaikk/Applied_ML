@@ -1,0 +1,209 @@
+# Libraries for SVM
+
+from sklearn.svm import LinearSVC
+from sklearn.model_selection import GridSearchCV
+
+# Define Function
+linear_svc = LinearSVC(random_state = 22) # Specifying random state = 22
+
+# Define a list of hyperparameters
+params_svc = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 100000]   }
+
+# a large C approximates hard margin SVM scenario
+
+grid_lrsvc = GridSearchCV(linear_svc, params_svc, cv = 5, n_jobs = 2)
+
+grid_lrsvc.fit(X_train, y_train)
+grid_lrsvc.best_params_
+
+from sklearn.svm import SVC
+
+best_params = {'C': 0.001, 'kernel': 'linear' , 'gamma': 'auto'}
+
+# Create the SVM model with the best parameters
+best_svm_model = SVC(**best_params)
+
+# Fit the model on the training data
+best_svm_model.fit(X_train, y_train)
+
+# Predict on the test data
+y_pred_SVM = best_svm_model.predict(X_test)
+
+# Model Validation:
+
+from sklearn.metrics import confusion_matrix
+
+# Calculate accuracy
+
+print("SVM Model Train Accuracy is:", best_svm_model.score(X_train, y_train))
+print("SVM Model Test Accuracy is:", best_svm_model.score(X_test, y_test))
+
+my_matrix = confusion_matrix(y_test, y_pred_SVM)
+print(my_matrix)
+
+print("TP is:", my_matrix[1,1])
+print("TN is:", my_matrix[0,0])
+print("FP is:", my_matrix[0,1])
+print("FN is:", my_matrix[1,0])
+
+from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
+
+
+print('Precision score:', precision_score(y_test, y_pred_SVM))
+print('Recall score:', recall_score(y_test, y_pred_SVM))
+print('Accuracy score:', accuracy_score(y_test, y_pred_SVM))
+print('F1 score:', f1_score(y_test, y_pred_SVM))
+
+
+
+
+# Training the Model
+from sklearn.naive_bayes import GaussianNB
+
+g_nb = GaussianNB()
+g_nb.fit(X_train, y_train)
+
+y_pred_gnb = g_nb.predict(X_test)
+
+# Model Validation:
+
+from sklearn.metrics import confusion_matrix
+
+# Calculate accuracy
+
+print("Naive Bayes Model Train Accuracy is:", g_nb.score(X_train, y_train))
+print("Naive Bayes Model Test Accuracy is:", g_nb.score(X_test, y_test))
+
+my_matrix_NB = confusion_matrix(y_test, y_pred_gnb)
+print(my_matrix_NB)
+
+print("TP is:", my_matrix_NB[1,1])
+print("TN is:", my_matrix_NB[0,0])
+print("FP is:", my_matrix_NB[0,1])
+print("FN is:", my_matrix_NB[1,0])
+
+print('Precision score:', precision_score(y_test, y_pred_gnb))
+print('Recall score:', recall_score(y_test, y_pred_gnb))
+print('Accuracy score:', accuracy_score(y_test, y_pred_gnb))
+print('F1 score:', f1_score(y_test, y_pred_gnb))
+
+
+
+
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
+
+# define function
+
+knn = KNeighborsClassifier() # by default euclidean distance p = 2
+
+# define a list of parameters
+param_knn = {'n_neighbors': range(1, 26) }  # from 1 to 25
+
+#apply grid search
+grid_knn = GridSearchCV(knn, param_knn, cv = 5)
+grid_knn.fit(X_train, y_train)
+
+# the best hyperparameter chosen:
+print(grid_knn.best_params_)
+
+# Taking k as 2 from the grid search we have the below KNN model:
+
+knn2 = KNeighborsClassifier(n_neighbors = 2)
+
+knn2.fit(X_train, y_train)
+
+knn2.predict(X_test)
+
+# Calculate accuracy
+
+print("KNN Model Train Accuracy is:", knn2.score(X_train, y_train))
+print("KNN Model Test Accuracy is:", knn2.score(X_test, y_test))
+
+
+
+
+
+#comparing ratios of 1's
+print(np.mean(y_train), np.mean(y)) 
+
+from sklearn.linear_model import LogisticRegression
+# Run the Logistic Regression Model: 
+## (a) Define function, train the model. Report coefficient.
+logreg = LogisticRegression()
+logreg.fit(X_train, y_train)
+#print(logreg.coef_)
+#print(logreg.intercept_)
+## (b) Accuracy
+
+print("Log reg Train Accuracy is:", logreg.score(X_train, y_train))
+print("Log reg Test Accuracy is:", logreg.score(X_test, y_test))
+
+from sklearn.metrics import confusion_matrix
+
+y_test_pred = logreg.predict(X_test)
+
+my_matrix = confusion_matrix(y_test, y_test_pred)
+print(my_matrix)
+print("TP is:", my_matrix[1,1])
+print("TN is:", my_matrix[0,0])
+print("FP is:", my_matrix[0,1])
+print("FN is:", my_matrix[1,0])
+
+
+
+
+
+
+from sklearn.tree import DecisionTreeClassifier
+
+dt_full = DecisionTreeClassifier(criterion = 'entropy', random_state = 0)
+
+dt_full.fit(X_train, y_train)
+dt_full.score(X_train, y_train), dt_full.score(X_test, y_test)
+
+dt_y = dt_full.feature_importances_ 
+
+dt_y
+
+dt_3 = DecisionTreeClassifier(random_state = 0, criterion = 'entropy', max_depth = 4)
+dt_3.fit(X_train, y_train)
+
+print("DT Train accuracy score: ",dt_3.score(X_train, y_train))
+print("DT Test accuracy score: ",dt_3.score(X_test, y_test))
+
+from sklearn.model_selection import GridSearchCV
+
+opt_tree = DecisionTreeClassifier(random_state = 0) # here, impurity measure is default, Gini. more efficient
+
+# Multiple hyperparameters to tune. separate elements by ,
+# go through all possible combinations: 9*9*9 models, with 5 fold cv
+dt_params = {'max_depth':  range(1,10)         ,
+             'min_samples_split':   range(2,11), # improper way to specify, should be a larger number
+             'max_leaf_nodes':    range(2,11)   }
+
+grid_tree = GridSearchCV(opt_tree, dt_params)
+grid_tree.fit(X_train, y_train)
+
+grid_tree.best_params_
+
+dt_4 = DecisionTreeClassifier(random_state = 0, criterion = 'entropy', max_depth = 4, max_leaf_nodes = 9 , min_samples_split = 2)
+dt_4.fit(X_train, y_train)
+
+print("DT Train accuracy score: ",dt_4.score(X_train, y_train))
+print("DT Test accuracy score: ",dt_4.score(X_test, y_test))
+
+from sklearn import tree
+# features_list=['age', 'job', 'marital', 'education', 'default', 'housing', 'loan',
+#        'contact', 'month', 'day_of_week', 'duration', 'campaign', 'pdays',
+#        'previous', 'poutcome', 'emp.var.rate', 'cons.price.idx',
+#        'cons.conf.idx', 'euribor3m', 'nr.employed']
+fig = plt.figure(figsize=(20,10)) # set a proper figure size (in case that the figure is too small to read or ratio is not proper)
+
+tree.plot_tree(grid_tree.best_estimator_, 
+#                feature_names = features_list, # specify variable names 
+               class_names = df.y, # specify class (Y) names
+               filled = True, impurity = False) # whether to color the boxes, whether to report gini index
+             #   fontsize = 12) # set fontsize to read
+plt.show()
