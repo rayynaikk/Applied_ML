@@ -1,0 +1,42 @@
+#Ensemble methods
+# Decision tree Bagging
+
+dt = DecisionTreeClassifier(random_state=42)
+
+bag_DT = BaggingClassifier(dt, max_samples = 100, n_estimators = 200, bootstrap = True,
+                            random_state=42)
+bag_DT.fit(X_train, y_train)
+
+print("DT with Bagging Train Accuracy: ",bag_DT.score(X_train, y_train))
+print("DT with Bagging Test Accuracy: ",bag_DT.score(X_test, y_test))
+
+
+
+
+#Ensemble methods bagging with best SVM model
+# SVM Bagging
+
+bag_svm2 = BaggingClassifier(best_svm_model, max_samples = 100, n_estimators = 200, bootstrap = True,
+                            random_state=42)
+bag_svm2.fit(X_train, y_train)
+
+print("SVM with Bagging Train Accuracy: ", bag_svm2.score(X_train, y_train))
+print("SVM with Bagging Test Accuracy: ", bag_svm2.score(X_test, y_test))
+
+
+
+
+
+# Ensemble methods
+# Decision Tree AdaBoost
+
+# Define base model
+dt1 = DecisionTreeClassifier(max_depth = 1, random_state = 42)
+# AdaBoost
+adaboostDT = AdaBoostClassifier(dt1, n_estimators = 200, learning_rate = 0.5, random_state = 42)
+adaboostDT.fit(X_train, y_train)
+# Performance
+
+print("DT Adaptive Boost Train Accuracy: " , adaboostDT.score(X_train, y_train)) 
+print("DT Adaptive Boost Test Accuracy: " , adaboostDT.score(X_test, y_test)) 
+# with boosting, each learner's performance can be slightly below 0.5
