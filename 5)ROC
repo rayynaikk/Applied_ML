@@ -1,0 +1,91 @@
+
+from sklearn.metrics import roc_curve, auc
+
+
+# Get predicted probabilities for SVM
+y_prob_svm = best_svm_model.decision_function(X_test)
+
+# Calculate SVM ROC curve
+fpr_svm, tpr_svm, thresholds_svm = roc_curve(y_test, y_prob_svm)
+roc_auc_svm = auc(fpr_svm, tpr_svm)
+
+
+# Get predicted probabilities for Gaussian Naive Bayes
+y_prob_gnb = g_nb.predict_proba(X_test)[:, 1]
+
+# Calculate Gaussian Naive Bayes ROC curve
+fpr_gnb, tpr_gnb, thresholds_gnb = roc_curve(y_test, y_prob_gnb)
+roc_auc_gnb = auc(fpr_gnb, tpr_gnb)
+
+
+# Get predicted probabilities for KNN
+y_prob_KNN = knn2.predict_proba(X_test)[:, 1]
+
+# Calculate KNN ROC curve
+fpr_knn2, tpr_knn2, thresholds_knn2 = roc_curve(y_test, y_prob_KNN)
+roc_auc_knn2 = auc(fpr_knn2, tpr_knn2)
+
+
+# Get predicted probabilities for DT normal
+y_prob_DT = grid_tree.predict_proba(X_test)[:, 1]
+
+# Calculate DT ROC curve
+fpr_DT, tpr_DT, thresholds_DT = roc_curve(y_test, y_prob_DT)
+roc_auc_DT = auc(fpr_DT, tpr_DT)
+
+
+# Get predicted probabilities for DT Ensemble (Bagging)
+y_prob_DT_Bag = bag_DT.predict_proba(X_test)[:, 1]
+
+# Calculate DT Ensemble (Bagging) ROC curve
+fpr_DT_bag, tpr_DT_bag, thresholds_DT_bag = roc_curve(y_test, y_prob_DT_Bag)
+roc_auc_DT_bag = auc(fpr_DT_bag, tpr_DT_bag)
+
+
+
+# Get predicted probabilities for DT Ensemble (Adaptive Boost)
+y_prob_DT_Boost = adaboostDT.predict_proba(X_test)[:, 1]
+
+# Calculate DT Ensemble (Adaboost) ROC curve
+fpr_DT_boost, tpr_DT_boost, thresholds_DT_boost = roc_curve(y_test, y_prob_DT_Boost)
+roc_auc_DT_boost = auc(fpr_DT_boost, tpr_DT_boost)
+
+
+
+# Get predicted probabilities for Best SVM Ensemble (bagging)
+y_prob_SVM_bag = bag_svm2.predict_proba(X_test)[:, 1]
+
+# Calculate SVM Ensemble (bagging) ROC curve
+fpr_SVM_bag, tpr_SVM_bag, thresholds_SVM_bag = roc_curve(y_test, y_prob_SVM_bag)
+roc_auc_SVM_bag = auc(fpr_SVM_bag, tpr_SVM_bag)
+
+
+
+# Get predicted probabilities for Log reg
+y_prob_logreg = logreg.predict_proba(X_test)[:, 1]
+
+# Calculate SVM Ensemble (bagging) ROC curve
+fpr_logreg, tpr_logreg, thresholds_logreg = roc_curve(y_test, y_prob_logreg)
+roc_auc_logreg = auc(fpr_logreg, tpr_logreg)
+
+
+# Plot ROC curves on the same graph
+plt.figure(figsize=(8, 6))
+plt.plot(fpr_svm, tpr_svm, color='darkorange', lw=2, label=f'SVM AUC (area = {roc_auc_svm:.2f})')
+plt.plot(fpr_gnb, tpr_gnb, color='green', lw=2, label=f'GNB AUC (area = {roc_auc_gnb:.2f})')
+plt.plot(fpr_knn2, tpr_knn2, color='yellow', lw=2, label=f'KNN AUC (area = {roc_auc_knn2:.2f})')
+
+plt.plot(fpr_DT, tpr_DT, color='red', lw=2, label=f'DT Normal AUC (area = {roc_auc_DT:.2f})')
+plt.plot(fpr_DT_bag, tpr_DT_bag, color='blue', lw=2, label=f'DT Bagging AUC (area = {roc_auc_DT_bag:.2f})')
+plt.plot(fpr_DT_boost, tpr_DT_boost, color='red', lw=2, label=f'DT Boosting AUC (area = {roc_auc_DT_boost:.2f})')
+plt.plot(fpr_SVM_bag, tpr_SVM_bag, color='pink', lw=2, label=f'SVM Bagging AUC (area = {roc_auc_SVM_bag:.2f})')
+plt.plot(fpr_logreg, tpr_logreg, color='brown', lw=2, label=f'Log reg AUC (area = {roc_auc_logreg:.2f})')
+
+
+
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('(ROC) Curves')
+plt.legend(loc='lower right')
+plt.show()
