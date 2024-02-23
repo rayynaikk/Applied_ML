@@ -1,0 +1,88 @@
+# Creating a dataframe
+
+df = pd.DataFrame(data, columns=['age', 'job', 'marital', 'education', 'default', 'housing', 'loan',
+       'contact', 'month', 'day_of_week', 'duration', 'campaign', 'pdays',
+       'previous', 'poutcome', 'emp.var.rate', 'cons.price.idx',
+       'cons.conf.idx', 'euribor3m', 'nr.employed', 'y'])
+
+# Removing duplicated records
+
+df_clean = df.drop_duplicates()
+
+## Histogram with detailed labels
+x = df_clean['y']
+plt.hist(x, bins = 20, color = 'r')
+plt.xlabel("Outcome")
+plt.ylabel('Frequency')
+
+# Data is Unbalanced.
+
+plt.figure(figsize=(30, 20))
+# Define your age bins. For example, starting from 0 to 100 with 10-year increments
+age_bins = list(range(0, 101, 10))
+ax=sns.histplot(data = df_clean, x = 'age', hue = 'y', bins=age_bins)
+for p in ax.patches:
+    # Get the height and position of each patch (bar)
+    height = p.get_height()
+    # If height is NaN (empty bar), continue to next bar
+    if not np.isnan(height):
+        # Place text at the top of the bar
+        ax.text(p.get_x() + p.get_width() / 2., height, f'{int(height)}', ha="center", va="bottom", fontsize=14)
+
+plt.show()
+
+#result
+# Age groups from 20-60 were the most contacted and also higest positive count was from 30-40. 
+# However,the positive responce was barely 20%.
+# Teenagers or senior citizens, who gave the most positive outcomes(more than 50%).
+
+plt.figure(figsize=(30, 20))
+ax=sns.histplot(data = df_clean, x = 'job', hue = 'y')
+for p in ax.patches:
+    # Get the height and position of each patch (bar)
+    height = p.get_height()
+    # If height is NaN (empty bar), continue to next bar
+    if not np.isnan(height):
+        # Place text at the top of the bar
+        ax.text(p.get_x() + p.get_width() / 2., height, f'{int(height)}', ha="center", va="bottom", fontsize=14)
+
+plt.show()
+
+#result
+# Admin, Blue collar and technician were highly contacted and the highest positive response was from Admin and technician.
+# However, Students were least contacted though they had maximum positive outcome of 50%.
+# Percentagewise, students and retired people had highest positive outcome.
+# Above statement also supports Age graph.
+
+# Correlation matrix
+var = ['age', 'duration', 'campaign', 'pdays',
+       'previous', 'emp.var.rate', 'cons.price.idx',
+       'cons.conf.idx', 'euribor3m', 'nr.employed']
+
+
+my_corr_matrix = df_clean[var].corr()
+
+my_corr_matrix
+
+# heatmap
+
+sns.heatmap(my_corr_matrix )
+
+#result
+# previous and pdays has strong negative corerelation. Also nr.employed and previous also have strong negative correlation.
+# emp.var.rate and euribor3m have strong positive correlation.
+
+# Scatter plot with color
+
+x = df_clean['emp.var.rate']
+y = df_clean['nr.employed']
+plt.scatter(x,y)
+plt.xlabel('Employee Variance rate')
+plt.ylabel('No. of Employee')
+
+# Scatter plot with color
+
+x = df_clean['emp.var.rate']
+y = df_clean['euribor3m']
+plt.scatter(x,y)
+plt.xlabel('Employee Variance rate')
