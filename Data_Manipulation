@@ -1,0 +1,58 @@
+# Finding the unique values in all charater variables:
+
+unique_values_dict = {}
+for col in df_clean.select_dtypes(include=['object']).columns:
+    unique_values_dict[col] = df_clean[col].unique()
+
+# Find the maximum length among the unique value arrays
+max_length = max(len(arr) for arr in unique_values_dict.values())
+
+# Pad arrays with NaN to make them of equal length
+for col, values in unique_values_dict.items():
+    unique_values_dict[col] = list(values) + [None] * (max_length - len(values))
+
+# Create a new DataFrame from the updated dictionary
+unique_values_df = pd.DataFrame(unique_values_dict)
+
+unique_values_df
+
+df.copy = df_clean.copy()
+
+df.copy['y'] = df.copy['y'].apply(lambda x: 1 if x == 'yes' else 0)
+
+char_var = ['job' ,'marital' , 'education' , 'default' , 'housing' , 'loan' , 
+        'contact' , 'month' , 'day_of_week' , 'poutcome']
+
+num_var = ['age', 'duration', 'campaign', 'pdays', 'previous', 'emp.var.rate', 
+                      'cons.price.idx', 'cons.conf.idx', 'euribor3m', 'nr.employed']
+
+df_encoded = pd.get_dummies(df.copy, columns=char_var)
+
+
+numerical_data = df_encoded[num_var]
+
+# Initialize StandardScaler
+scaler = StandardScaler()
+
+# Fit and transform the numerical features using StandardScaler
+scaled_numerical_data = scaler.fit_transform(numerical_data)
+
+# Replace the original numerical features in the DataFrame with the scaled features
+df_encoded[num_var] = scaled_numerical_data
+
+df_encoded
+
+y = df_encoded['y']
+
+X = df_encoded.drop('y' , axis =1)
+
+#spliting the data into test and train
+
+X_tr, X_test, y_tr, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+from imblearn.over_sampling import SMOTE
+
+smote = SMOTE(random_state=22)
+
+# Fit and apply SMOTE on the training data
+X_train, y_train = smote.fit_resample(X_tr, y_tr)
